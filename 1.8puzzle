@@ -1,0 +1,88 @@
+import heapq
+
+class PuzzleNode:
+    def __init__(self, state, parent=None, action=None):
+        self.state = state
+        self.parent = parent
+        self.action = action
+        self.cost = 0 if parent is None else parent.cost + 1
+        self.heuristic = self.calculate_heuristic()
+        self.total_cost = self.cost + self.heuristic
+
+    def calculate_heuristic(self):
+        # Manhanttan distance heuristic
+        goal_state = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+        h = 0
+        for i in range(3):
+            for j in range(3):
+                value = self.state[i][j]
+                if value != 0:
+                    goal_row, goal_col = divmod(value, 3)
+                    h += abs(i - goal_row) + abs(j - goal_col)
+        return h
+
+    def __lt__(self, other):
+        return self.total_cost < other.total_cost
+
+def get_blank_position(state):
+    for i in range(3):
+        for j in range(3):
+            if state[i][j] == 0:
+                return i, j
+
+def get_neighbors(node):
+    i, j = get_blank_position(node.state)
+    neighbors = []
+
+    for move in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+        ni, nj = i + move[0], j + move[1]
+        if 0 <= ni < 3 and 0 <= nj < 3:
+            new_state = [row[:] for row in node.state]
+            new_state[i][j], new_state[ni][nj] = new_state[ni][nj], new_state[i][j]
+            neighbors.append(PuzzleNode(new_state, node, move))
+    
+    return neighbors
+
+def print_solution(solution_node):
+    if solution_node is None:
+        print("No solution found.")
+        return
+
+    path = []
+    while solution_node:
+        path.append((solution_node.state, solution_node.action))
+        solution_node = solution_node.parent
+
+    path.reverse()
+
+    for step, action in enumerate(path):
+        print(f"Step {step + 1}:")
+        for row in action[0]:
+            print(row)
+        print(f"Action: {action[1]}\n")
+
+def solve_8_puzzle(initial_state):
+    initial_node = PuzzleNode(initial_state)
+    heap = [initial_node]
+    heapq.heapify(heap)
+    visited = set()
+
+    while heap:
+        current_node = heapq.heappop(heap)
+
+        if current_node.state == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]:
+            print("Solution found!")
+            print_solution(current_node)
+            return
+
+        visited.add(tuple(map(tuple, current_node.state)))
+
+        for neighbor in get_neighbors(current_node):
+            if tuple(map(tuple, neighbor.state)) not in visited:
+                heapq.heappush(heap, neighbor)
+
+    print("No solution found.")
+
+# Example usage:
+initial_state = [[1, 2, 3], [4, 0, 5], [6, 7, 8]]
+solve_8_puzzle(initial_state)
