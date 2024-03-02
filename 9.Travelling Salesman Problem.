@@ -1,0 +1,36 @@
+from itertools import permutations
+
+def calculate_total_distance(order, distances):
+    total_distance = 0
+    for i in range(len(order) - 1):
+        total_distance += distances[order[i]][order[i + 1]]
+    total_distance += distances[order[-1]][order[0]]  # Return to the starting city
+    return total_distance
+
+def travelling_salesman_bruteforce(distances):
+    num_cities = len(distances)
+    cities = list(range(num_cities))
+    min_distance = float('inf')
+    optimal_order = None
+
+    for perm in permutations(cities):
+        current_distance = calculate_total_distance(perm, distances)
+        if current_distance < min_distance:
+            min_distance = current_distance
+            optimal_order = perm
+
+    return optimal_order, min_distance
+
+# Example usage:
+if __name__ == "__main__":
+    # Example distances between cities (replace with your own distances)
+    distances = [
+        [0, 10, 15, 20],
+        [10, 0, 35, 25],
+        [15, 35, 0, 30],
+        [20, 25, 30, 0]
+    ]
+
+    optimal_order, min_distance = travelling_salesman_bruteforce(distances)
+    print("Optimal order:", optimal_order)
+    print("Minimum distance:", min_distance)
