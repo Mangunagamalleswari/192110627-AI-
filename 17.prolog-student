@@ -1,0 +1,22 @@
+% Define student-teacher relationship
+teaches(teacher1, subject1).
+teaches(teacher2, subject2).
+teaches(teacher3, subject3).
+
+% Define student-subject relationship
+enrolled(student1, subject1).
+enrolled(student1, subject2).
+enrolled(student2, subject1).
+enrolled(student3, subject3).
+enrolled(student4, subject2).
+enrolled(student4, subject3).
+
+% Define subject-code relationship
+subject_code(subject1, code101).
+subject_code(subject2, code102).
+subject_code(subject3, code103).
+
+% Query to get the subject code of a student's enrolled subjects
+student_subject_code(Student, SubjectCode) :-
+    enrolled(Student, Subject),
+    subject_code(Subject, SubjectCode).
