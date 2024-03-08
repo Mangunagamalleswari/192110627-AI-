@@ -1,0 +1,12 @@
+def sum_integers(n):
+    # Base case: If n is 0, return 0
+    if n == 0:
+        return 0
+    # Recursive case: Sum integers from 1 to n-1 and add n to it
+    else:
+        return n + sum_integers(n - 1)
+
+# Example usage
+n = int(input("Enter a positive integer: "))
+result = sum_integers(n)
+print("The sum of integers from 1 to", n, "is", result)
